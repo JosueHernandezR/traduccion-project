@@ -1,7 +1,32 @@
 "use client";
 import Layout from "@/components/layout";
+import { RadioGroup } from "@headlessui/react";
+import {
+  CheckCircleIcon,
+  PlusCircleIcon,
+  PlusIcon,
+} from "@heroicons/react/24/outline";
+import { use, useState } from "react";
+
+const deliveryMethods = [
+  { id: 1, title: "Estandar", turnaround: "4–10 días habiles", price: "$5.00" },
+  { id: 2, title: "Express", turnaround: "2–5 días habiles", price: "$16.00" },
+];
+
+function classNames(...classes: string[]) {
+  return classes.filter(Boolean).join(" ");
+}
 
 export default function Pay() {
+  const [name, setName] = useState<string>("");
+  const [apellidos, setApellido] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [numCel, setNumCel] = useState<string>("");
+
+  const [selectedDeliveryMethod, setSelectedDeliveryMethod] = useState(
+    deliveryMethods[0]
+  );
+
   return (
     <Layout>
       {
@@ -16,61 +41,104 @@ export default function Pay() {
             >
               <div className="p-8">
                 <div className="mx-auto py-12 px-4 md:px-10 lg:px-0 lg:pb-24 lg:pt-0">
-                  <h2 id="summary-heading" className="sr-only">
-                    Order summary
+                  <h2 className="font-bold text-center text-4xl">
+                    Resumen y metodo de envío
                   </h2>
-                  <dl>
-                    <dt className="text-sm font-medium">Amount due</dt>
-                    <dd className="mt-1 text-3xl font-bold tracking-tight text-white">
-                      $232.00
-                    </dd>
-                  </dl>
-                  <ul
-                    role="list"
-                    className="divide-y divide-white divide-opacity-10 text-sm font-medium"
-                  >
-                    {/* {products.map((product) => (
-                  <li
-                    key={product.id}
-                    className="flex items-start space-x-4 py-6"
-                  >
-                    <img
-                      src={product.imageSrc}
-                      alt={product.imageAlt}
-                      className="h-20 w-20 flex-none rounded-md object-cover object-center"
-                    />
-                    <div className="flex-auto space-y-1">
-                      <h3 className="text-white">{product.name}</h3>
-                      <p>{product.color}</p>
-                      <p>{product.size}</p>
-                    </div>
-                    <p className="flex-none text-base font-medium text-white">
-                      {product.price}
+                  <div className="text-start my-5">
+                    <p className="my-2 text-white text-start text-lg">Nombre</p>
+                    <p className="my-2 text-white text-start text-lg">
+                      Apellidos
                     </p>
-                  </li>
-                ))} */}
-                  </ul>
-                  <dl className="space-y-6 border-t border-white border-opacity-10 pt-6 text-sm font-medium">
-                    <div className="flex items-center justify-between">
-                      <dt>Subtotal</dt>
-                      <dd>$570.00</dd>
+                    <p className="my-2 text-white text-start text-lg">
+                      Correo electrónico
+                    </p>
+                  </div>
+                  <RadioGroup
+                    value={selectedDeliveryMethod}
+                    onChange={setSelectedDeliveryMethod}
+                    className="mt-10"
+                  >
+                    <RadioGroup.Label className="text-xl text-center mx-auto font-medium text-white">
+                      Método de envío
+                    </RadioGroup.Label>
+                    <div className="mt-4 grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-4">
+                      {deliveryMethods.map((deliveryMethod) => (
+                        <RadioGroup.Option
+                          key={deliveryMethod.id}
+                          value={deliveryMethod}
+                          className={({ checked, active }) =>
+                            classNames(
+                              checked
+                                ? "border-transparent"
+                                : "border-gray-300",
+                              active ? "ring-2 ring-indigo-500" : "",
+                              "relative flex cursor-pointer rounded-lg border bg-white p-4 shadow-sm focus:outline-none"
+                            )
+                          }
+                        >
+                          {({ checked, active }) => (
+                            <>
+                              <span className="flex flex-1">
+                                <span className="flex flex-col">
+                                  <RadioGroup.Label
+                                    as="span"
+                                    className="block text-sm font-medium text-gray-900"
+                                  >
+                                    {deliveryMethod.title}
+                                  </RadioGroup.Label>
+                                  <RadioGroup.Description
+                                    as="span"
+                                    className="mt-1 flex items-center text-sm text-gray-500"
+                                  >
+                                    {deliveryMethod.turnaround}
+                                  </RadioGroup.Description>
+                                  <RadioGroup.Description
+                                    as="span"
+                                    className="mt-6 text-sm font-medium text-gray-900"
+                                  >
+                                    {deliveryMethod.price}
+                                  </RadioGroup.Description>
+                                </span>
+                              </span>
+                              {checked ? (
+                                <CheckCircleIcon
+                                  className="h-5 w-5 text-indigo-600"
+                                  aria-hidden="true"
+                                />
+                              ) : null}
+                              <span
+                                className={classNames(
+                                  active ? "border" : "border-2",
+                                  checked
+                                    ? "border-indigo-500"
+                                    : "border-transparent",
+                                  "pointer-events-none absolute -inset-px rounded-lg"
+                                )}
+                                aria-hidden="true"
+                              />
+                            </>
+                          )}
+                        </RadioGroup.Option>
+                      ))}
                     </div>
-
-                    <div className="flex items-center justify-between">
-                      <dt>Shipping</dt>
-                      <dd>$25.00</dd>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <dt>Taxes</dt>
-                      <dd>$47.60</dd>
-                    </div>
-
-                    <div className="flex items-center justify-between border-t border-white border-opacity-10 pt-6 text-white">
-                      <dt className="text-base">Total</dt>
-                      <dd className="text-base">$642.60</dd>
-                    </div>
-                  </dl>
+                  </RadioGroup>
+                </div>
+                <div className="mx-auto py-12 px-4 md:px-10 lg:px-0 lg:pb-24 lg:pt-0">
+                  <h2 className="font-bold text-center text-2xl text-white">
+                    Documentos a traducir
+                  </h2>
+                  <div className="border-4 border-dashed rounded-xl p-5 flex flex-col bg-white my-5 justify-center items-center">
+                    <PlusCircleIcon className="text-sky-600 w-24 h-24 text-center" />
+                    <br />
+                    <p className="text-center text-gray-700 text-bold text-xl">
+                      Subir archivos
+                    </p>
+                  </div>
+                </div>
+                <div className="w-full">
+                  <button className="border rounded-2xl w-full bg-white text-gray-900 hover:bg-sky-400 p-5 hover:text-white">
+                    <span className="text-lg font-semibold">Ordenar ahora</span>
+                  </button>
                 </div>
               </div>
             </section>
@@ -80,17 +148,15 @@ export default function Pay() {
               className="py-16 lg:col-start-1 lg:row-start-1 lg:mx-auto lg:w-full lg:max-w-lg lg:pb-24 lg:pt-0"
             >
               <div className="py-8">
-                <h2 id="payment-and-shipping-heading" className="sr-only">
-                  Payment and shipping details
-                </h2>
+                <h2 className="font-bold text-center text-4xl">Ordene ahora</h2>
                 <form>
                   <div className="mx-auto max-w-2xl px-4 lg:max-w-none lg:px-0">
                     <div>
                       <h3
                         id="contact-info-heading"
-                        className="text-lg font-medium text-gray-900"
+                        className="text-lg font-medium text-gray-900 text-center mt-2"
                       >
-                        Contact information
+                        En unos clics, obtenga su orden con facilidad y rapidez.
                       </h3>
 
                       <div className="mt-6">
@@ -98,7 +164,7 @@ export default function Pay() {
                           htmlFor="email-address"
                           className="block text-sm font-medium text-gray-700"
                         >
-                          Email address
+                          Correo electrónico
                         </label>
                         <div className="mt-1">
                           <input
@@ -106,6 +172,8 @@ export default function Pay() {
                             id="email-address"
                             name="email-address"
                             autoComplete="email"
+                            value={email}
+                            onChange={() => {}}
                             className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                           />
                         </div>
@@ -114,7 +182,7 @@ export default function Pay() {
 
                     <div className="mt-10">
                       <h3 className="text-lg font-medium text-gray-900">
-                        Payment details
+                        Detalles de pago
                       </h3>
 
                       <div className="mt-6 grid grid-cols-3 gap-x-4 gap-y-6 sm:grid-cols-4">
@@ -123,7 +191,7 @@ export default function Pay() {
                             htmlFor="card-number"
                             className="block text-sm font-medium text-gray-700"
                           >
-                            Card number
+                            Número de tarjeta
                           </label>
                           <div className="mt-1">
                             <input
@@ -141,7 +209,7 @@ export default function Pay() {
                             htmlFor="expiration-date"
                             className="block text-sm font-medium text-gray-700"
                           >
-                            Expiration date (MM/YY)
+                            Fecha de expiración (MM/YY)
                           </label>
                           <div className="mt-1">
                             <input
@@ -176,7 +244,7 @@ export default function Pay() {
 
                     <div className="mt-10">
                       <h3 className="text-lg font-medium text-gray-900">
-                        Shipping address
+                        Dirección de compras
                       </h3>
 
                       <div className="mt-6 grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-3">
@@ -185,7 +253,7 @@ export default function Pay() {
                             htmlFor="address"
                             className="block text-sm font-medium text-gray-700"
                           >
-                            Address
+                            Dirección
                           </label>
                           <div className="mt-1">
                             <input
@@ -203,7 +271,7 @@ export default function Pay() {
                             htmlFor="city"
                             className="block text-sm font-medium text-gray-700"
                           >
-                            City
+                            Ciudad
                           </label>
                           <div className="mt-1">
                             <input
@@ -221,7 +289,7 @@ export default function Pay() {
                             htmlFor="region"
                             className="block text-sm font-medium text-gray-700"
                           >
-                            State / Province
+                            Estado
                           </label>
                           <div className="mt-1">
                             <input
@@ -239,7 +307,7 @@ export default function Pay() {
                             htmlFor="postal-code"
                             className="block text-sm font-medium text-gray-700"
                           >
-                            Postal code
+                            Código Postal
                           </label>
                           <div className="mt-1">
                             <input
@@ -256,7 +324,7 @@ export default function Pay() {
 
                     <div className="mt-10">
                       <h3 className="text-lg font-medium text-gray-900">
-                        Billing information
+                        Información de facturación
                       </h3>
 
                       <div className="mt-6 flex items-center">
@@ -272,7 +340,7 @@ export default function Pay() {
                             htmlFor="same-as-shipping"
                             className="text-sm font-medium text-gray-900"
                           >
-                            Same as shipping information
+                            Misma informacion de envío
                           </label>
                         </div>
                       </div>
@@ -283,7 +351,7 @@ export default function Pay() {
                         type="submit"
                         className="rounded-md border border-transparent footer-bg px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
                       >
-                        Pay now
+                        Pagar ahora
                       </button>
                     </div>
                   </div>
@@ -296,4 +364,3 @@ export default function Pay() {
     </Layout>
   );
 }
-
